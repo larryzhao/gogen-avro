@@ -69,13 +69,13 @@ func %v(r io.Reader) (%v, error) {
 		return nil, err
 	}
 
-	return event
+	return event, nil
 }
 `
 
 const recordStructQualifiedNameTemplate = `
 func (r %v) QualifiedName() string {
-	return r.name
+	return "%v"
 }
 `
 
@@ -190,7 +190,7 @@ func (r *RecordDefinition) publicDeserializerMethodDef() string {
 
 // Added by Larry
 func (r *RecordDefinition) publicQualifiedNameMethodDef() string {
-	return fmt.Sprintf(recordStructQualifiedNameTemplate, r.GoType())
+	return fmt.Sprintf(recordStructQualifiedNameTemplate, r.GoType(), r.name)
 }
 
 // publicDeserializerSRMethodDef 定义 Deserialize Schema Registry 风格的 Avro 结构的方法定义
@@ -258,6 +258,8 @@ func (r *RecordDefinition) AddDeserializer(p *generator.Package) {
 	// Import guard, to avoid circular dependencies
 	if !p.HasFunction(UTIL_FILE, "", r.DeserializerMethod()) {
 		p.AddImport(r.filename(), "io")
+		p.AddImport(r.filename(), "bytes")
+		p.AddImport(r.filename(), "errors")
 		p.AddFunction(UTIL_FILE, "", r.DeserializerMethod(), r.deserializerMethodDef())
 		p.AddFunction(r.filename(), "", r.publicDeserializerMethod(), r.publicDeserializerMethodDef())
 		p.AddFunction(r.filename(), "", r.publicSRDecodeMethod(), r.publicSRDecodeMethodDef())
