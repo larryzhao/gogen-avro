@@ -7,6 +7,8 @@
 package events
 
 import (
+	"bytes"
+	"errors"
 	"io"
 )
 
