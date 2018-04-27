@@ -1,1 +1,5 @@
 *.swp
+debug
+gogen-avro/events/
+gogen-avro/foo.avsc
+.vscode/

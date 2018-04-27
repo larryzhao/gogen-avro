@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/alanctgardner/gogen-avro/generator"
+	"github.com/larryzhao/gogen-avro/generator"
 )
 
 const UTIL_FILE = "primitive.go"

@@ -12,7 +12,7 @@ Generate Go structures and serializer / deserializer methods from Avro schemas. 
 gogen-avro is a tool which you install on your system (usually on your GOPATH), and run as part of your build process. To install gogen-avro to `$GOPATH/bin/`, run:
 
 ```
-go install github.com/alanctgardner/gogen-avro/gogen-avro
+go install github.com/larryzhao/gogen-avro/gogen-avro
 ```
 
 Or install a fixed release from gopkg.in:
@@ -29,7 +29,7 @@ To generate Go source files from one or more Avro schema files, run:
 gogen-avro [--package=<package name>] [--containers] <output directory> <avro schema files>
 ```
 
-You can also use a `go:generate` directive in a source file ([example](https://github.com/alanctgardner/gogen-avro/blob/master/test/primitive/schema_test.go)):
+You can also use a `go:generate` directive in a source file ([example](https://github.com/larryzhao/gogen-avro/blob/master/test/primitive/schema_test.go)):
 
 ```
 //go:generate $GOPATH/bin/gogen-avro . primitives.avsc
@@ -55,7 +55,7 @@ To create a new `container.Writer`, you can specify the schema manually in `cont
 
 An example of how to write a container file can be found in `example/container/example.go`.
 
-[Godocs for the container package](https://godoc.org/github.com/alanctgardner/gogen-avro/container)
+[Godocs for the container package](https://godoc.org/github.com/larryzhao/gogen-avro/container)
 
 ### Example
 
@@ -63,11 +63,11 @@ The `example` directory contains simple example projects with an Avro schema. On
 
 ```
 # Build the Go source files from the Avro schema using the generate directive
-go generate github.com/alanctgardner/gogen-avro/example
+go generate github.com/larryzhao/gogen-avro/example
 
 # Install the example projects on the gopath
-go install github.com/alanctgardner/gogen-avro/example/record
-go install github.com/alanctgardner/gogen-avro/example/container
+go install github.com/larryzhao/gogen-avro/example/record
+go install github.com/larryzhao/gogen-avro/example/container
 ```
 
 ### Naming

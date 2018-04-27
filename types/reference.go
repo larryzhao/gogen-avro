@@ -2,7 +2,8 @@ package types
 
 import (
 	"fmt"
-	"github.com/alanctgardner/gogen-avro/generator"
+
+	"github.com/larryzhao/gogen-avro/generator"
 )
 
 /*
@@ -37,6 +38,7 @@ func (s *Reference) DeserializerMethod() string {
 }
 
 func (s *Reference) AddStruct(p *generator.Package, containers bool) error {
+	// Added by Larry: s.def is *types.RecordDefinition
 	return s.def.AddStruct(p, containers)
 }
 

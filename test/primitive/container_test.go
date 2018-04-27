@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/alanctgardner/gogen-avro/container"
+	"github.com/larryzhao/gogen-avro/container"
 	"github.com/linkedin/goavro"
 )
 

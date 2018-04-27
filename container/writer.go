@@ -4,7 +4,7 @@ package container
 import (
 	"bytes"
 	"compress/flate"
-	"github.com/alanctgardner/gogen-avro/container/avro"
+	"github.com/larryzhao/gogen-avro/container/avro"
 	"io"
 )
 

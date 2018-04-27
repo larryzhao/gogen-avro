@@ -3,8 +3,10 @@ package types
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/alanctgardner/gogen-avro/generator"
 	"strconv"
+	"strings"
+
+	"github.com/larryzhao/gogen-avro/generator"
 )
 
 const recordStructDefTemplate = `type %v struct {
@@ -33,6 +35,18 @@ func (r %v) Serialize(w io.Writer) error {
 }
 `
 
+const recordStructPublicSREncodeTemplate = `
+func (r %v) SREncode(w io.Writer) error {
+	return %v(r, w)
+}
+`
+
+const recordStructPublicKafkaTopicTemplate = `
+func (r %v) KafkaTopic() string {
+	return "%v"
+}
+`
+
 const recordStructDeserializerTemplate = `
 func %v(r io.Reader) (%v, error) {
 	var str = &%v{}
@@ -45,6 +59,30 @@ func %v(r io.Reader) (%v, error) {
 const recordStructPublicDeserializerTemplate = `
 func %v(r io.Reader) (%v, error) {
 	return %v(r)
+}
+`
+
+const recordStructPublicSRDecodeTemplate = `
+func %v(r io.Reader) (%v, error) {
+	var bb []byte
+
+	_, err := r.Read(bb)
+	if err != nil {
+		return nil, err
+	}
+
+	magicByte := bb[0]
+	if magicByte != 0 {
+		return nil, errors.New("magic Byte is not 0")
+	}
+
+	buf := bytes.NewBuffer(bb[5:])
+	event, err := %v(buf)
+	if err != nil {
+		return nil, err
+	}
+
+	return event
 }
 `
 
@@ -85,6 +123,11 @@ func (r *RecordDefinition) GoType() string {
 
 func (r *RecordDefinition) Aliases() []QualifiedName {
 	return r.aliases
+}
+
+func (r *RecordDefinition) kafkaTopic() string {
+	snakeName := generator.ToSnake(r.name.Name)
+	return fmt.Sprintf("qian-%s-events", strings.Replace(snakeName, "_", "-", -1))
 }
 
 func (r *RecordDefinition) structFields() string {
@@ -135,6 +178,12 @@ func (r *RecordDefinition) publicDeserializerMethod() string {
 	return fmt.Sprintf("Deserialize%v", r.Name())
 }
 
+// publicDeserializerSRMethod 定义 Deserialize Schema Registry 风格的 Avro 结构的方法名
+// Added by Larry
+func (r *RecordDefinition) publicSRDecodeMethod() string {
+	return fmt.Sprintf("SRDecode%v", r.Name())
+}
+
 func (r *RecordDefinition) recordWriterMethod() string {
 	return fmt.Sprintf("New%vWriter", r.Name())
 }
@@ -147,8 +196,22 @@ func (r *RecordDefinition) publicSerializerMethodDef() string {
 	return fmt.Sprintf(recordStructPublicSerializerTemplate, r.GoType(), r.SerializerMethod())
 }
 
+func (r *RecordDefinition) publicSREncodeMethodDef() string {
+	return fmt.Sprintf(recordStructPublicSREncodeTemplate, r.GoType(), r.SerializerMethod())
+}
+
+func (r *RecordDefinition) publicKafkaTopicMethodDef() string {
+	return fmt.Sprintf(recordStructPublicKafkaTopicTemplate, r.GoType(), r.kafkaTopic())
+}
+
 func (r *RecordDefinition) publicDeserializerMethodDef() string {
 	return fmt.Sprintf(recordStructPublicDeserializerTemplate, r.publicDeserializerMethod(), r.GoType(), r.DeserializerMethod())
+}
+
+// publicDeserializerSRMethodDef 定义 Deserialize Schema Registry 风格的 Avro 结构的方法定义
+// Added by Larry
+func (r *RecordDefinition) publicSRDecodeMethodDef() string {
+	return fmt.Sprintf(recordStructPublicSRDecodeTemplate, r.publicSRDecodeMethod(), r.GoType(), r.DeserializerMethod())
 }
 
 func (r *RecordDefinition) filename() string {
@@ -181,7 +244,7 @@ func (r *RecordDefinition) AddStruct(p *generator.Package, containers bool) erro
 		}
 
 		if containers {
-			p.AddImport(r.filename(), "github.com/alanctgardner/gogen-avro/container")
+			p.AddImport(r.filename(), "github.com/larryzhao/gogen-avro/container")
 			p.AddFunction(r.filename(), "", r.recordWriterMethod(), r.recordWriterMethodDef())
 		}
 
@@ -199,6 +262,8 @@ func (r *RecordDefinition) AddSerializer(p *generator.Package) {
 		p.AddImport(r.filename(), "io")
 		p.AddFunction(UTIL_FILE, "", r.SerializerMethod(), r.serializerMethodDef())
 		p.AddFunction(r.filename(), r.GoType(), "Serialize", r.publicSerializerMethodDef())
+		p.AddFunction(r.filename(), r.GoType(), "SREncode", r.publicSREncodeMethodDef())
+		p.AddFunction(r.filename(), r.GoType(), "QianKafkaTopic", r.publicKafkaTopicMethodDef())
 		for _, f := range r.fields {
 			f.Type().AddSerializer(p)
 		}
@@ -211,6 +276,7 @@ func (r *RecordDefinition) AddDeserializer(p *generator.Package) {
 		p.AddImport(r.filename(), "io")
 		p.AddFunction(UTIL_FILE, "", r.DeserializerMethod(), r.deserializerMethodDef())
 		p.AddFunction(r.filename(), "", r.publicDeserializerMethod(), r.publicDeserializerMethodDef())
+		p.AddFunction(r.filename(), "", r.publicSRDecodeMethod(), r.publicSRDecodeMethodDef())
 		for _, f := range r.fields {
 			f.Type().AddDeserializer(p)
 		}

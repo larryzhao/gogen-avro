@@ -2,7 +2,7 @@ package types
 
 import (
 	"fmt"
-	"github.com/alanctgardner/gogen-avro/generator"
+	"github.com/larryzhao/gogen-avro/generator"
 )
 
 const writeLongMethod = `
