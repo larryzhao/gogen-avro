@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
-	"strings"
 
 	"github.com/larryzhao/gogen-avro/generator"
 )
@@ -32,18 +31,6 @@ const recordConstructorTemplate = `
 const recordStructPublicSerializerTemplate = `
 func (r %v) Serialize(w io.Writer) error {
 	return %v(r, w)
-}
-`
-
-const recordStructPublicSREncodeTemplate = `
-func (r %v) SREncode(w io.Writer) error {
-	return %v(r, w)
-}
-`
-
-const recordStructPublicKafkaTopicTemplate = `
-func (r %v) KafkaTopic() string {
-	return "%v"
 }
 `
 
@@ -86,6 +73,12 @@ func %v(r io.Reader) (%v, error) {
 }
 `
 
+const recordStructQualifiedNameTemplate = `
+func (r %v) QualifiedName() string {
+	return r.name
+}
+`
+
 const recordWriterTemplate = `
 func %v(writer io.Writer, codec container.Codec, recordsPerBlock int64) (*container.Writer, error) {
 	str := &%v{}
@@ -123,11 +116,6 @@ func (r *RecordDefinition) GoType() string {
 
 func (r *RecordDefinition) Aliases() []QualifiedName {
 	return r.aliases
-}
-
-func (r *RecordDefinition) kafkaTopic() string {
-	snakeName := generator.ToSnake(r.name.Name)
-	return fmt.Sprintf("qian-%s-events", strings.Replace(snakeName, "_", "-", -1))
 }
 
 func (r *RecordDefinition) structFields() string {
@@ -196,16 +184,13 @@ func (r *RecordDefinition) publicSerializerMethodDef() string {
 	return fmt.Sprintf(recordStructPublicSerializerTemplate, r.GoType(), r.SerializerMethod())
 }
 
-func (r *RecordDefinition) publicSREncodeMethodDef() string {
-	return fmt.Sprintf(recordStructPublicSREncodeTemplate, r.GoType(), r.SerializerMethod())
-}
-
-func (r *RecordDefinition) publicKafkaTopicMethodDef() string {
-	return fmt.Sprintf(recordStructPublicKafkaTopicTemplate, r.GoType(), r.kafkaTopic())
-}
-
 func (r *RecordDefinition) publicDeserializerMethodDef() string {
 	return fmt.Sprintf(recordStructPublicDeserializerTemplate, r.publicDeserializerMethod(), r.GoType(), r.DeserializerMethod())
+}
+
+// Added by Larry
+func (r *RecordDefinition) publicQualifiedNameMethodDef() string {
+	return fmt.Sprintf(recordStructQualifiedNameTemplate, r.GoType())
 }
 
 // publicDeserializerSRMethodDef 定义 Deserialize Schema Registry 风格的 Avro 结构的方法定义
@@ -262,8 +247,7 @@ func (r *RecordDefinition) AddSerializer(p *generator.Package) {
 		p.AddImport(r.filename(), "io")
 		p.AddFunction(UTIL_FILE, "", r.SerializerMethod(), r.serializerMethodDef())
 		p.AddFunction(r.filename(), r.GoType(), "Serialize", r.publicSerializerMethodDef())
-		p.AddFunction(r.filename(), r.GoType(), "SREncode", r.publicSREncodeMethodDef())
-		p.AddFunction(r.filename(), r.GoType(), "QianKafkaTopic", r.publicKafkaTopicMethodDef())
+		p.AddFunction(r.filename(), r.GoType(), "QualifiedName", r.publicQualifiedNameMethodDef())
 		for _, f := range r.fields {
 			f.Type().AddSerializer(p)
 		}

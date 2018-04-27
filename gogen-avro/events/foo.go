@@ -7,6 +7,8 @@
 package events
 
 import (
+	"bytes"
+	"errors"
 	"io"
 )
 
@@ -38,7 +40,7 @@ func SRDecodeFoo(r io.Reader) (*Foo, error) {
 		return nil, err
 	}
 
-	return event
+	return nil, event
 }
 
 func NewFoo() *Foo {
@@ -47,12 +49,8 @@ func NewFoo() *Foo {
 	return v
 }
 
-func (r *Foo) KafkaTopic() string {
-	return "qian-foo-events"
-}
-
-func (r *Foo) SREncode(w io.Writer) error {
-	return writeFoo(r, w)
+func (r *Foo) QualifiedName() string {
+	return r.name
 }
 
 func (r *Foo) Schema() string {
