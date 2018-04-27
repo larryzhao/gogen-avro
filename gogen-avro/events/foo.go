@@ -7,8 +7,6 @@
 package events
 
 import (
-	"bytes"
-	"errors"
 	"io"
 )
 
@@ -40,7 +38,7 @@ func SRDecodeFoo(r io.Reader) (*Foo, error) {
 		return nil, err
 	}
 
-	return nil, event
+	return event, nil
 }
 
 func NewFoo() *Foo {
@@ -50,7 +48,7 @@ func NewFoo() *Foo {
 }
 
 func (r *Foo) QualifiedName() string {
-	return r.name
+	return "com.jianshu.event.Foo"
 }
 
 func (r *Foo) Schema() string {
