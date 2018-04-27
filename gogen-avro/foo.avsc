@@ -1,0 +1,15 @@
+{
+  "namespace": "com.jianshu.event",
+  "type": "record",
+  "name": "Foo",
+  "fields": [
+    {
+      "name": "bar",
+      "type": ["string", "null"]
+    },
+    {
+      "name": "user_id",
+      "type": "int"
+    }
+  ]
+}

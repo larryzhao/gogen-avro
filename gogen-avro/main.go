@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/alanctgardner/gogen-avro/generator"
-	"github.com/alanctgardner/gogen-avro/types"
+	"github.com/larryzhao/gogen-avro/generator"
+	"github.com/larryzhao/gogen-avro/types"
 )
 
 func main() {
@@ -27,6 +27,7 @@ func main() {
 
 	var err error
 	pkg := generator.NewPackage(*packageName)
+	// Added by Larry: 创建一个 namespace
 	namespace := types.NewNamespace()
 
 	for _, fileName := range files {
@@ -36,6 +37,7 @@ func main() {
 			os.Exit(2)
 		}
 
+		// Added by Larry: 将 Schema 添加到 namespace
 		_, err = namespace.TypeForSchema(schema)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error decoding schema for file %q - %v\n", fileName, err)
@@ -43,12 +45,14 @@ func main() {
 		}
 	}
 
+	// Added by Larry: 将 namespace 添加到 package
 	err = namespace.AddToPackage(pkg, codegenComment(files), *containers)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error generating code for schema - %v\n", err)
 		os.Exit(4)
 	}
 
+	// Added by Larry: 将 package 的内容写入指定路径里的 file
 	err = pkg.WriteFiles(targetDir)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error writing source files to directory %q - %v\n", targetDir, err)
