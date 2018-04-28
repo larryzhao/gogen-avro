@@ -51,12 +51,9 @@ func %v(r io.Reader) (%v, error) {
 
 const recordStructPublicSRDecodeTemplate = `
 func %v(r io.Reader) (%v, error) {
-	var bb []byte
-
-	_, err := r.Read(bb)
-	if err != nil {
-		return nil, err
-	}
+	tmpBuf := new(bytes.Buffer)
+	tmpBuf.ReadFrom(r)
+	bb := tmpBuf.Bytes()
 
 	magicByte := bb[0]
 	if magicByte != 0 {
