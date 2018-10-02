@@ -4,3 +4,4 @@ gogen-avro/events/
 gogen-avro/foo.avsc
 .vscode/
 gogen-avro/debug
+gogen-avro/gogen-avro
