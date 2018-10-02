@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+
 	"github.com/larryzhao/gogen-avro/generator"
 )
 
@@ -36,15 +37,25 @@ func %v(r io.Reader) (%v, error) {
 `
 
 type unionField struct {
+	name       string
 	itemType   []AvroType
 	definition []interface{}
 }
 
-func NewUnionField(itemType []AvroType, definition []interface{}) *unionField {
+func NewUnionField(name string, itemType []AvroType, definition []interface{}) *unionField {
 	return &unionField{
+		name:       name,
 		itemType:   itemType,
 		definition: definition,
 	}
+}
+
+func (s *unionField) compositeFieldName() string {
+	var unionFields = "Union"
+	for _, i := range s.itemType {
+		unionFields += i.Name()
+	}
+	return unionFields
 }
 
 func (s *unionField) Name() string {
@@ -52,11 +63,10 @@ func (s *unionField) Name() string {
 }
 
 func (s *unionField) GoType() string {
-	var unionFields = "Union"
-	for _, i := range s.itemType {
-		unionFields += i.Name()
+	if s.name == "" {
+		return generator.ToPublicName(s.compositeFieldName())
 	}
-	return generator.ToPublicName(unionFields)
+	return generator.ToPublicName(s.name)
 }
 
 func (s *unionField) unionEnumType() string {

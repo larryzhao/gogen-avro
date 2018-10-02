@@ -11,6 +11,7 @@ run_test() {
 
 go install github.com/larryzhao/gogen-avro/gogen-avro
 
+
 if [ $# -eq 0 ]; then
 	for t in test/*/; do
 		run_test $t	

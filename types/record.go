@@ -226,7 +226,11 @@ func (r *RecordDefinition) AddStruct(p *generator.Package, containers bool) erro
 		}
 
 		if containers {
+<<<<<<< HEAD
 			p.AddImport(r.filename(), "github.com/larryzhao/gogen-avro/container")
+=======
+			p.AddImport(r.filename(), "github.com/actgardner/gogen-avro/container")
+>>>>>>> master
 			p.AddFunction(r.filename(), "", r.recordWriterMethod(), r.recordWriterMethodDef())
 		}
 

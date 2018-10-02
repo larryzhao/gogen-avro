@@ -3,10 +3,11 @@ package main
 import (
 	"bytes"
 	"fmt"
+
 	"github.com/larryzhao/gogen-avro/example/avro"
 )
 
-/* This example shows serializing and deserializing records as byte buffers */
+// This example shows serializing and deserializing records as byte buffers
 func main() {
 	// Create a new DemoSchema struct
 	demoStruct := avro.DemoSchema{

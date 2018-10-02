@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-/* Round-trip some primitive values through our serializer and goavro to verify */
+// Round-trip some primitive values through our serializer and goavro to verify
 const fixtureJson = `
 [
 	{
@@ -85,5 +85,5 @@ func TestRoundTrip(t *testing.T) {
 
 func TestDefaults(t *testing.T) {
 	record := NewEnumTestRecord()
-	assert.Equal(t, record.EnumField, TestSymbol3)
+	assert.Equal(t, record.EnumField, TestEnumTypeTestSymbol3)
 }

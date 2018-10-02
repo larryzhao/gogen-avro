@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+
 	"github.com/larryzhao/gogen-avro/generator"
 )
 

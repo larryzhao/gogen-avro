@@ -9,6 +9,6 @@ fi
  
 GITHUB_REPO="github.com/larryzhao/gogen-avro"
 VERSION="$1"
-GOPKG_REPO="gopkg.in/alanctgardner/gogen-avro.$VERSION"
+GOPKG_REPO="gopkg.in/actgardner/gogen-avro.$VERSION"
 
 sed -i "s|$GITHUB_REPO|$GOPKG_REPO|" container/*.go generator/*.go types/*.go gogen-avro/main.go example/*/*.go test.sh 

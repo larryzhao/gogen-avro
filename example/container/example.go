@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/larryzhao/gogen-avro/container"
 	"github.com/larryzhao/gogen-avro/example/avro"
-	"os"
 )
 
-/* This example shows serializing records in a object container file */
+// This example shows serializing records in a object container file
 func main() {
 	// Create a new DemoSchema struct
 	demoStruct := avro.DemoSchema{

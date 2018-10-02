@@ -7,8 +7,9 @@
 package avro
 
 import (
-	"github.com/larryzhao/gogen-avro/container"
 	"io"
+
+	"github.com/larryzhao/gogen-avro/container"
 )
 
 type DemoSchema struct {

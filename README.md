@@ -1,9 +1,9 @@
 gogen-avro
 ===
 
-[![Build Status](https://travis-ci.org/alanctgardner/gogen-avro.svg?branch=master)](https://travis-ci.org/alanctgardner/gogen-avro)
-[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/alanctgardner/gogen-avro/master/LICENSE)
-[![Version 5.0.1](https://img.shields.io/badge/version-5.0.1-lightgrey.svg)](https://gopkg.in/alanctgardner/gogen-avro.v5)
+[![Build Status](https://travis-ci.org/actgardner/gogen-avro.svg?branch=master)](https://travis-ci.org/actgardner/gogen-avro)
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/actgardner/gogen-avro/master/LICENSE)
+[![Version 5.1.0](https://img.shields.io/badge/version-5.1.0-lightgrey.svg)](https://gopkg.in/actgardner/gogen-avro.v5)
 
 Generate Go structures and serializer / deserializer methods from Avro schemas. Generated serializers/deserializers are 2-8x faster than goavro, and you get compile-time safety for getting and setting fields.
 
@@ -18,7 +18,7 @@ go install github.com/larryzhao/gogen-avro/gogen-avro
 Or install a fixed release from gopkg.in:
 
 ```
-go install gopkg.in/alanctgardner/gogen-avro.v5
+go install gopkg.in/actgardner/gogen-avro.v5
 ```
 
 ### Usage
@@ -34,6 +34,8 @@ You can also use a `go:generate` directive in a source file ([example](https://g
 ```
 //go:generate $GOPATH/bin/gogen-avro . primitives.avsc
 ```
+
+Note: If you want to parse multiple `.avsc` files into a single Go package (a single folder), make sure you put them all in one line. gogen-avro produces a file, `primitive.go`, that will be overwritten if you run it multiple times with different `.avsc` files and the same output folder.
 
 For each record in the provided schemas, gogen-avro will produce a struct, and the following methods:
 
