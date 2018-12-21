@@ -70,8 +70,8 @@ func %v(r io.Reader) (%v, error) {
 }
 `
 
-const recordStructQualifiedNameTemplate = `
-func (r %v) QualifiedName() string {
+const recordStructFullnameTemplate = `
+func (r %v) Fullname() string {
 	return "%v"
 }
 `
@@ -186,8 +186,8 @@ func (r *RecordDefinition) publicDeserializerMethodDef() string {
 }
 
 // Added by Larry
-func (r *RecordDefinition) publicQualifiedNameMethodDef() string {
-	return fmt.Sprintf(recordStructQualifiedNameTemplate, r.GoType(), r.name)
+func (r *RecordDefinition) publicFullnameMethodDef() string {
+	return fmt.Sprintf(recordStructFullnameTemplate, r.GoType(), r.name)
 }
 
 // publicDeserializerSRMethodDef 定义 Deserialize Schema Registry 风格的 Avro 结构的方法定义
@@ -244,7 +244,7 @@ func (r *RecordDefinition) AddSerializer(p *generator.Package) {
 		p.AddImport(r.filename(), "io")
 		p.AddFunction(UTIL_FILE, "", r.SerializerMethod(), r.serializerMethodDef())
 		p.AddFunction(r.filename(), r.GoType(), "Serialize", r.publicSerializerMethodDef())
-		p.AddFunction(r.filename(), r.GoType(), "QualifiedName", r.publicQualifiedNameMethodDef())
+		p.AddFunction(r.filename(), r.GoType(), "Fullname", r.publicFullnameMethodDef())
 		for _, f := range r.fields {
 			f.Type().AddSerializer(p)
 		}
